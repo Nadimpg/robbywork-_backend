@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 import config from "../config";
+import dns from "dns";
 import { User, UserRole } from "../app/models";
 import bcrypt from "bcrypt";
+
+dns.setServers(["8.8.8.8", "8.8.4.4", "1.1.1.1"]);
 
 async function connectMongoDB() {
   try {
@@ -32,7 +35,7 @@ mongoose.connection.on("disconnected", () => {
 
 // async function initiateSuperAdmin() {
 //   const adminEmail = "admin@messematch.com";
-  
+
 //   const existingAdmin = await User.findOne({ email: adminEmail });
 //   if (existingAdmin) return;
 

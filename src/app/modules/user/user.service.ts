@@ -180,10 +180,6 @@ const resendRegistrationOtp = async (email: string) => {
   };
 };
 
-
-
-
-
 export const userService = {
   createUserIntoDb,
   verifyRegistrationOtp,

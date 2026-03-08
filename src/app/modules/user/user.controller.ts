@@ -61,8 +61,6 @@ const resendRegistrationOtp = catchAsync(
   },
 );
 
-
-
 export const userController = {
   createUser,
   verifyRegistrationOtp,

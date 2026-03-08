@@ -1,58 +1,39 @@
 import config from "../../../config";
+import { PASSWORD_RESET_TEMPLATE } from "../../../utils/Template";
 
-export const OtpEmailTemplate = (otp: string) => `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
-  <div style="max-width: 500px; margin: 40px auto; background: #ffffff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
-      <h1 style="color: #ffffff; margin: 0; font-size: 24px;">${config.site_name || " MesseMatch"}</h1>
-    </div>
-    <div style="padding: 40px 30px; text-align: center;">
-      <h2 style="color: #333; margin: 0 0 10px;">Password Reset OTP</h2>
-      <p style="color: #666; margin: 0 0 30px;">Use the code below to reset your password</p>
-      <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 0 0 30px;">
-        <span style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #333;">${otp}</span>
-      </div>
-      <p style="color: #999; font-size: 14px; margin: 0;">This code expires in 15 minutes</p>
-    </div>
-    <div style="background: #f8f9fa; padding: 20px; text-align: center;">
-      <p style="color: #999; font-size: 12px; margin: 0;">If you didn't request this, please ignore this email.</p>
-    </div>
-  </div>
-</body>
-</html>
-`;
+export const OtpEmailTemplate = (otp: string) => PASSWORD_RESET_TEMPLATE(otp);
 
 export const WelcomeEmailTemplate = (name: string) => `
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to ${config.site_name || "MesseMatch"}</title>
+  <style>
+      body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; background-color: #f4f4f7; margin: 0; padding: 0; }
+      .container { max-width: 480px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+      .header { background: linear-gradient(135deg, #E47B35, #FF9555, #FFB366); padding: 32px; text-align: center; }
+      .header h1 { color: #ffffff; margin: 0; font-size: 24px; }
+      .body { padding: 32px; text-align: center; }
+      .body p { color: #555; font-size: 15px; line-height: 1.6; margin: 8px 0; }
+      .footer { text-align: center; padding: 20px 32px; background: #fafafa; color: #999; font-size: 12px; }
+  </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
-  <div style="max-width: 500px; margin: 40px auto; background: #ffffff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
-      <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Welcome to ${config.site_name || " MesseMatch"}!</h1>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to ${config.site_name || "MesseMatch"}!</h1>
+        </div>
+        <div class="body">
+            <p>Hi ${name},</p>
+            <p>Thank you for joining us! Your account has been created successfully.</p>
+            <p>If you have any questions, feel free to reach out to our support team.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} ${config.site_name || "MesseMatch"}. All rights reserved.</p>
+        </div>
     </div>
-    <div style="padding: 40px 30px;">
-      <h2 style="color: #333; margin: 0 0 20px;">Hi ${name},</h2>
-      <p style="color: #666; line-height: 1.6; margin: 0 0 20px;">
-        Thank you for joining us! Your account has been created successfully.
-      </p>
-      <p style="color: #666; line-height: 1.6; margin: 0;">
-        If you have any questions, feel free to reach out to our support team.
-      </p>
-    </div>
-    <div style="background: #f8f9fa; padding: 20px; text-align: center;">
-      <p style="color: #999; font-size: 12px; margin: 0;">&copy; ${new Date().getFullYear()} ${config.site_name || " MesseMatch"}. All rights reserved.</p>
-    </div>
-  </div>
 </body>
 </html>
 `;

@@ -26,5 +26,4 @@ router.post(
   userController.resendRegistrationOtp,
 );
 
-
 export const userRoutes = router;
