@@ -83,9 +83,34 @@ const completeProfileAsFitter = catchAsync(
   },
 );
 
+// Complete profile as Company
+const completeProfileAsCompany = catchAsync(
+  async (req: Request & { user?: JwtPayload }, res: Response) => {
+    const userId = req.user?.id as string;
+    const files = req.files as Record<string, Express.Multer.File[]> | undefined;
+
+    const result = await userService.completeProfileAsCompany(
+      userId,
+      req.body,
+      {
+        businessRegDocument: files?.businessRegDocument?.[0],
+        taxIdDocument: files?.taxIdDocument?.[0],
+      },
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Company profile completed successfully",
+      data: result,
+    });
+  },
+);
+
 export const userController = {
   createUser,
   verifyRegistrationOtp,
   resendRegistrationOtp,
   completeProfileAsFitter,
+  completeProfileAsCompany,
 };

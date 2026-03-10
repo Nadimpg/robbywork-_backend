@@ -70,6 +70,16 @@ const CompleteProfileAsFitterSchema = z.object({
   longitude: z.coerce.number().min(-180).max(180).optional(),
 });
 
+// Complete profile as Company
+const CompleteProfileAsCompanySchema = z.object({
+  companyName: z.string().min(2).max(150).optional(),
+  businessEmail: z.string().email("Please provide a valid business email").optional(),
+  contactPersonName: z.string().min(2).max(100).optional(),
+  postalCode: z.string().min(3).max(20).optional(),
+  lattitude: z.coerce.number().min(-90).max(90).optional(),
+  longitude: z.coerce.number().min(-180).max(180).optional(),
+});
+
 // Update plan
 const UpdatePlanSchema = z.object({
   plan: z.enum(
@@ -92,4 +102,5 @@ export const UserValidation = {
   ResendRegistrationOtpSchema,
   UpdatePlanSchema,
   CompleteProfileAsFitterSchema,
+  CompleteProfileAsCompanySchema,
 };

@@ -32,10 +32,20 @@ router.post(
 // Complete profile as Fitter (auth required)
 router.patch(
   "/complete-profile/fitter",
-  auth(UserRole.FITTER),
   fileUploader.upload.single("profilePicture"),
   validateRequest(UserValidation.CompleteProfileAsFitterSchema),
   userController.completeProfileAsFitter,
+);
+
+// Complete profile as Company (auth required)
+router.patch(
+  "/complete-profile/company",
+  fileUploader.upload.fields([
+    { name: "businessRegDocument", maxCount: 1 },
+    { name: "taxIdDocument", maxCount: 1 },
+  ]),
+  validateRequest(UserValidation.CompleteProfileAsCompanySchema),
+  userController.completeProfileAsCompany,
 );
 
 export const userRoutes = router;

@@ -31,6 +31,12 @@ export interface IUser extends Document {
   password: string;
   profilePicture?: string;
   role: UserRole;
+  companyName?: string;
+  businessEmail?: string;
+  contactPersonName?: string;
+  businessRegDocument?: string;
+  taxIdDocument?: string;
+  hasVerificationBadge?: boolean;
   status: UserStatus;
   isVerified: boolean;
   verificationOtp?: string;
@@ -91,7 +97,29 @@ const UserSchema = new Schema<IUser>(
     role: {
       type: String,
       enum: Object.values(UserRole),
-      default: UserRole.FITTER,
+    },
+    companyName: {
+      type: String,
+      trim: true,
+    },
+    businessEmail: {
+      type: String,
+      lowercase: true,
+      trim: true,
+    },
+    contactPersonName: {
+      type: String,
+      trim: true,
+    },
+    businessRegDocument: {
+      type: String,
+    },
+    taxIdDocument: {
+      type: String,
+    },
+    hasVerificationBadge: {
+      type: Boolean,
+      default: false,
     },
     status: {
       type: String,

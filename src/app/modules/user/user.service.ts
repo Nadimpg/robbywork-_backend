@@ -227,9 +227,66 @@ const completeProfileAsFitter = async (
   return updatedUser;
 };
 
+const completeProfileAsCompany = async (
+  userId: string,
+  payload: {
+    companyName?: string;
+    businessEmail?: string;
+    contactPersonName?: string;
+    postalCode?: string;
+    lattitude?: number;
+    longitude?: number;
+  },
+  files?: {
+    businessRegDocument?: Express.Multer.File;
+    taxIdDocument?: Express.Multer.File;
+  },
+) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  const updateData: Record<string, unknown> = { ...payload };
+
+  // Upload documents to Cloudinary in parallel for maximum performance
+  const [businessRegResult, taxIdResult] = await Promise.all([
+    files?.businessRegDocument
+      ? fileUploader.uploadToCloudinary(
+          files.businessRegDocument,
+          "messematch/documents",
+        )
+      : null,
+    files?.taxIdDocument
+      ? fileUploader.uploadToCloudinary(
+          files.taxIdDocument,
+          "messematch/documents",
+        )
+      : null,
+  ]);
+
+  if (businessRegResult) updateData.businessRegDocument = businessRegResult.Location;
+  if (taxIdResult) updateData.taxIdDocument = taxIdResult.Location;
+
+  // Auto-grant verification badge when both documents are present
+  const hasBusinessReg = businessRegResult || !!user.businessRegDocument;
+  const hasTaxId = taxIdResult || !!user.taxIdDocument;
+  if (hasBusinessReg && hasTaxId) {
+    updateData.hasVerificationBadge = true;
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+    new: true,
+    runValidators: true,
+  }).select("-password");
+
+  return updatedUser;
+};
+
 export const userService = {
   createUserIntoDb,
   verifyRegistrationOtp,
   resendRegistrationOtp,
   completeProfileAsFitter,
+  completeProfileAsCompany,
 };
