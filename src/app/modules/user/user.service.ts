@@ -7,6 +7,8 @@ import ApiError from "../../../errors/ApiErrors";
 import { jwtHelpers } from "../../../helpars/jwtHelpers";
 import emailSender from "../../../shared/emailSender";
 import { EMAIL_VERIFICATION_TEMPLATE } from "../../../utils/Template";
+import { fileUploader } from "../../../helpars/fileUploader";
+import { UserRole } from "../../models/User.model";
 
 // Create a new user - Registration with OTP verification
 const createUserIntoDb = async (payload: {
@@ -180,8 +182,54 @@ const resendRegistrationOtp = async (email: string) => {
   };
 };
 
+const completeProfileAsFitter = async (
+  userId: string,
+  payload: {
+    UserRole?: string;
+    language?: string;
+    userName?: string;
+    fullName?: string;
+    postalCode?: string;
+    workLocations?: string[];
+    skills?: string[];
+    spokenLanguages?: string[];
+    driversLicense?: string;
+    hourlyRate?: number;
+    dailyRate?: number;
+    experienceYears?: number;
+    bio?: string;
+    plan?: string;
+    lattitude?: number;
+    longitude?: number;
+  },
+  profilePictureFile?: Express.Multer.File,
+) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  const updateData: Record<string, unknown> = { ...payload };
+
+  if (profilePictureFile) {
+    const uploaded = await fileUploader.uploadToCloudinary(
+      profilePictureFile,
+      "messematch/profiles",
+    );
+    updateData.profilePicture = uploaded.Location;
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+    new: true,
+    runValidators: true,
+  }).select("-password");
+
+  return updatedUser;
+};
+
 export const userService = {
   createUserIntoDb,
   verifyRegistrationOtp,
   resendRegistrationOtp,
+  completeProfileAsFitter,
 };

@@ -34,6 +34,42 @@ const ResendRegistrationOtpSchema = z.object({
   email: z.string().email("Please provide a valid email"),
 });
 
+// Helper: coerces a JSON string, comma-separated string, or array into an array of strings
+const stringArrayField = z.preprocess((val) => {
+  if (Array.isArray(val)) return val;
+  if (typeof val === "string") {
+    try {
+      const parsed = JSON.parse(val);
+      if (Array.isArray(parsed)) return parsed;
+    } catch {
+      // not JSON — treat as comma-separated
+    }
+    return val
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  return val;
+}, z.array(z.string()));
+
+// Complete profile as Fitter
+const CompleteProfileAsFitterSchema = z.object({
+  userName: z.string().min(2).max(50).optional(),
+  fullName: z.string().min(2).max(100).optional(),
+  postalCode: z.string().min(3).max(20).optional(),
+  workLocations: stringArrayField.optional(),
+  skills: stringArrayField.optional(),
+  spokenLanguages: stringArrayField.optional(),
+  driversLicense: z.string().optional(),
+  hourlyRate: z.coerce.number().min(0).optional(),
+  dailyRate: z.coerce.number().min(0).optional(),
+  experienceYears: z.coerce.number().min(0).max(60).optional(),
+  bio: z.string().max(1000).optional(),
+  plan: z.enum(["FREE", "PREMIUM"]).optional(),
+  lattitude: z.coerce.number().min(-90).max(90).optional(),
+  longitude: z.coerce.number().min(-180).max(180).optional(),
+});
+
 // Update plan
 const UpdatePlanSchema = z.object({
   plan: z.enum(
@@ -55,4 +91,5 @@ export const UserValidation = {
   VerifyRegistrationOtpSchema,
   ResendRegistrationOtpSchema,
   UpdatePlanSchema,
+  CompleteProfileAsFitterSchema,
 };

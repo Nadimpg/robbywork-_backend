@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
+import { JwtPayload } from "jsonwebtoken";
 import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
 import { userService } from "./user.service";
@@ -61,8 +62,30 @@ const resendRegistrationOtp = catchAsync(
   },
 );
 
+// Complete profile as Fitter
+const completeProfileAsFitter = catchAsync(
+  async (req: Request & { user?: JwtPayload }, res: Response) => {
+    const userId = req.user?.id as string;
+    const profilePictureFile = req.file;
+
+    const result = await userService.completeProfileAsFitter(
+      userId,
+      req.body,
+      profilePictureFile,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Profile completed successfully",
+      data: result,
+    });
+  },
+);
+
 export const userController = {
   createUser,
   verifyRegistrationOtp,
   resendRegistrationOtp,
+  completeProfileAsFitter,
 };
