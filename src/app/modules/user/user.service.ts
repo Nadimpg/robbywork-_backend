@@ -209,7 +209,10 @@ const completeProfileAsFitter = async (
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
 
-  const updateData: Record<string, unknown> = { ...payload };
+  const updateData: Record<string, unknown> = {
+    ...payload,
+    role: UserRole.FITTER,
+  };
 
   if (profilePictureFile) {
     const uploaded = await fileUploader.uploadToCloudinary(
@@ -230,6 +233,7 @@ const completeProfileAsFitter = async (
 const completeProfileAsCompany = async (
   userId: string,
   payload: {
+    UserRole?: string;
     companyName?: string;
     businessEmail?: string;
     contactPersonName?: string;
@@ -247,7 +251,10 @@ const completeProfileAsCompany = async (
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
 
-  const updateData: Record<string, unknown> = { ...payload };
+  const updateData: Record<string, unknown> = {
+    ...payload,
+    role: UserRole.COMPANY,
+  };
 
   // Upload documents to Cloudinary in parallel for maximum performance
   const [businessRegResult, taxIdResult] = await Promise.all([
@@ -265,7 +272,8 @@ const completeProfileAsCompany = async (
       : null,
   ]);
 
-  if (businessRegResult) updateData.businessRegDocument = businessRegResult.Location;
+  if (businessRegResult)
+    updateData.businessRegDocument = businessRegResult.Location;
   if (taxIdResult) updateData.taxIdDocument = taxIdResult.Location;
 
   // Auto-grant verification badge when both documents are present
