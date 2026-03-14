@@ -161,7 +161,7 @@ const forgotPassword = async (payload: { email: string }) => {
     "Password Reset OTP -  MesseMatch",
   );
 
-  return { message: "OTP sent to your email", otp }; // Return OTP for testing purposes only
+  return { message: "OTP sent to your email", otp }; // Return OTP for testing purposes only But Should be removed in production
 };
 
 // Resend OTP
